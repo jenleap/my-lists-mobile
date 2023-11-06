@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext } from 'react';
 import { Button, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -6,6 +6,7 @@ import { AllLists } from './screens/AllLists';
 import { SingleList } from './screens/SingleList';
 import { AllInvites } from './screens/AllInvites';
 import { Login } from './screens/Login';
+import { AuthContext, AuthProvider } from './store/auth.context';
 
 
 
@@ -18,20 +19,45 @@ export type StackParamList = {
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
-export default function App() {
-
+const AuthStack = () => {
   return (
-   <>
-    <StatusBar barStyle={'light-content'} />
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login'>
+    <Stack.Navigator>
         <Stack.Screen name="Login" component={ Login } />
-        <Stack.Screen name="AllLists" component={ AllLists } />
+    </Stack.Navigator>
+  )
+}
+
+const AuthenticatedStack = () => {
+  return (
+    <Stack.Navigator initialRouteName='AllLists'>
+        <Stack.Screen 
+          name="AllLists" 
+          component={ AllLists } 
+          options={{ title: 'My Lists' }}
+        />
         <Stack.Screen name="SingleList" component={ SingleList } />
         <Stack.Screen name="AllInvites" component={ AllInvites } />
       </Stack.Navigator>
+  )
+}
+
+const Navigation = () => {
+  const authContext = useContext(AuthContext);
+
+  return (
+    <NavigationContainer>
+      { authContext.isAuthenticated ? <AuthenticatedStack /> : <AuthStack /> }
     </NavigationContainer>
-   </>
+  )
+}
+
+export default function App() {
+
+  return (
+   <AuthProvider>
+    <StatusBar barStyle={'light-content'} />
+      <Navigation />
+   </AuthProvider>
   );
 }
 

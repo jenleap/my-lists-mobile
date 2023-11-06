@@ -1,9 +1,18 @@
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StackParamList } from '../App';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-export const SingleList = () => {
+export const SingleList = ({ route, navigation }: NativeStackScreenProps<StackParamList, 'SingleList'>) => {
     const [ inputText, setInputText ] = useState("");
   const [ items, setItems ] = useState<string[]>([]);
+
+  useLayoutEffect(() => {
+    const listId = route.params.listId;
+    navigation.setOptions({
+        title: "List Title"
+    });
+  });
 
   const handleInput = (text: string) => {
     setInputText(text);
