@@ -1,4 +1,6 @@
-import { PropsWithChildren, createContext, useState } from "react";
+import { PropsWithChildren, createContext, useEffect, useState } from "react";
+import { clearToken, getToken, saveToken } from "../utils/auth";
+
 
 export const AuthContext = createContext({
     token: "",
@@ -10,12 +12,22 @@ export const AuthContext = createContext({
 export const AuthProvider = ({ children }: PropsWithChildren) => {
     const [ token, setAuthToken ] = useState("");
 
+    useEffect(() => {
+        getToken().then((token) => {
+            if (token) {
+                setAuthToken(token);
+            }
+        })
+    }, []);
+
     const signIn = (token: string) => {
         setAuthToken(token);
+        saveToken(token);
     }
 
     const signOut = () => {
-        setAuthToken("");
+        setAuthToken("");   
+        clearToken();
     }
 
     const isAuthenticated = token.length > 0;

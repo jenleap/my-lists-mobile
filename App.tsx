@@ -7,7 +7,7 @@ import { SingleList } from './screens/SingleList';
 import { AllInvites } from './screens/AllInvites';
 import { Login } from './screens/Login';
 import { AuthContext, AuthProvider } from './store/auth.context';
-
+import { Icon } from '@rneui/themed';
 
 
 export type StackParamList = {
@@ -21,19 +21,30 @@ const Stack = createNativeStackNavigator<StackParamList>();
 
 const AuthStack = () => {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: 'lightgrey' },
+        headerTintColor: 'grey',
+        contentStyle: { backgroundColor: 'lightgrey' },
+      }}
+    >
         <Stack.Screen name="Login" component={ Login } />
     </Stack.Navigator>
   )
 }
 
 const AuthenticatedStack = () => {
+  const authContext = useContext(AuthContext);
+  
   return (
     <Stack.Navigator initialRouteName='AllLists'>
         <Stack.Screen 
           name="AllLists" 
           component={ AllLists } 
-          options={{ title: 'My Lists' }}
+          options={{ 
+            title: 'My Lists',
+            headerRight: () => <Icon name="logout" size={24} onPress={ authContext.signOut }/>
+          }}
         />
         <Stack.Screen name="SingleList" component={ SingleList } />
         <Stack.Screen name="AllInvites" component={ AllInvites } />
@@ -60,14 +71,3 @@ export default function App() {
    </AuthProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 50,
-    paddingHorizontal: 16
-  }
-});
